@@ -41,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
         cmgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
     }
+
+    @Override
+    public void finish() {
+       unregisterReceiver(myReceiver);
+        super.finish();
+    }
+
     //查看是否有連線
     private boolean isConnectNetWork(){
      NetworkInfo networkInfo =  cmgr.getActiveNetworkInfo();
