@@ -23,13 +23,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="test6"
-        android:text="Test6"
+        android:text="下載PDF"
         />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="test7"
-        android:text="Test7"
+        android:text="顯示PDF"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="test8"
+        android:text="叫別支程式做事情"
         />
     <ImageView
         android:id="@+id/img"

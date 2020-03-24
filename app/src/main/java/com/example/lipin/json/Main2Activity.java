@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -200,6 +202,7 @@ public class Main2Activity extends AppCompatActivity {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
+
             switch (msg.what) {
                 case 0:
                     img.setImageBitmap(bmp);
@@ -210,6 +213,9 @@ public class Main2Activity extends AppCompatActivity {
                 case 2:
                     progressDialog.dismiss();//讓進度條消失掉,並沒有刪除該物件
                     break;
+                case 3:
+                    showPDF();
+                    break;
                 default:
                     Log.v("brad", "有出問題");
             }
@@ -219,7 +225,7 @@ public class Main2Activity extends AppCompatActivity {
 
     //第二張圖片
     public void test5(View view) {
-        new Thread() {
+       new Thread() {
             @Override
             public void run() {
                 fetchImage02();
@@ -233,7 +239,6 @@ public class Main2Activity extends AppCompatActivity {
         try {
             URL url = new URL("https://pdfmyurl.com/?url=https://www.gamer.com.tw/");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            HttpURLConnection connection1 =(HttpsURLConnection) url.openConnection();
 //            因為跳出error:1000008b:SSL 無法解析加密https
 //            因此加入這串讓他為true
             connection.setHostnameVerifier(new HostnameVerifier() {
@@ -259,7 +264,8 @@ public class Main2Activity extends AppCompatActivity {
             bin.close();
             fout.flush();
             fout.close();
-
+            //加入觀看pdf
+//            uIhandler.sendEmptyMessage(3);已寫在第7顆按鈕來讀取PDF
             Log.v("brad","save ok");
 
         } catch (Exception e) {
@@ -270,6 +276,7 @@ public class Main2Activity extends AppCompatActivity {
 
         }
     }
+
 
     public void test6(View view) {
         //沒有允許權限不給做動作
@@ -283,4 +290,39 @@ public class Main2Activity extends AppCompatActivity {
         }.start();
     }
 
+    //開啟PDF黨
+    private void showPDF(){
+        File file= new File(downloaDir,"gamer.pdf");
+        //                Provider: 提供者
+        Uri pdfUri = FileProvider.getUriForFile(this,
+                //            授權者
+                getPackageName()+".provider",file);
+        //看View
+        Intent intent= new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(pdfUri,"application/pdf");
+        //使畫面不會被蓋過,使當年內容顯示要去的view內容,這樣開啟pdf畫面就不會變黑了
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        //標記可以給客戶端一個指定檔案的臨時訪問許可權
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
+        uIhandler.sendEmptyMessage(3);
+    }
+    //讀取外部資料夾內的pdf
+    public void test7(View view){
+    new Thread(){
+        @Override
+        public void run() {
+            showPDF();
+        }
+    }.start();
+    }
+    //叫別人做事情
+    public void test8(View view) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
+        intent.putExtra(Intent.EXTRA_TEXT, "http://www.url.com");
+        startActivity(Intent.createChooser(intent,"Share URL"));
+
+    }
 }

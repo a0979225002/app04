@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--給予授權後,還要給予要授權的檔案路徑-->
+<paths
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-path name="external_files" path="."/>
+    <external-path name="Download" path="Download/"/>
+</paths>
