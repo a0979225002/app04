@@ -30,6 +30,16 @@
         android:onClick="test4"
         android:text="跳轉至進階網路篇"
         />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:id="@+id/mesg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </ScrollView>
 
 
 </LinearLayout>

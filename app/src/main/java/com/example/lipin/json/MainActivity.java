@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,22 +20,27 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
     private ConnectivityManager cmgr;
     private MyReceiver myReceiver;//創立廣播器
 
+    @BindView(R.id.mesg) TextView mesg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         //實作廣播器
         myReceiver = new MyReceiver();
         //給予單一監聽,網路相關全部監聽
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         //多了監聽寫法filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         //讓他接收的事件 Receiver:接收者
+        filter.addAction("brad");
         registerReceiver(myReceiver,filter);
 
         //監聽網路狀態
@@ -60,11 +66,13 @@ public class MainActivity extends AppCompatActivity {
     }
     //BroadcastReceiver:廣播接收器
     // 任何訊息都會接收監聽,你只需判斷要給誰去工作
-    private class MyReceiver extends BroadcastReceiver{
+    private class MyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-           Log.v("brad","onReceive") ;
-            Log.v("brad","isNetwork:"+isConnectNetWork());
+            if (intent.getAction().equals("brad")) {
+                String data = intent.getStringExtra("data");
+                mesg.setText(data);
+            }
         }
     }
     //檢查網路
@@ -77,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void test3(View view) {
         //有關底層的網路寫法,是需要thread的,不然不能夠去使用
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 try {
@@ -87,12 +95,17 @@ public class MainActivity extends AppCompatActivity {
                             new BufferedReader(
                                     new InputStreamReader(conn.getInputStream()));
                     String line;
-                    while ((line = reader.readLine())!=null){
-                        Log.v("brad",line);
+                    StringBuffer sb = new StringBuffer();
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
                     }
                     reader.close();
+                    Intent intent = new Intent("brad");
+                    intent.putExtra("data", sb.toString());
+                    sendBroadcast(intent);
+
                 } catch (Exception e) {
-                    Log.v("brad",e.toString());
+                    Log.v("brad", e.toString());
                 }
             }
         }.start();

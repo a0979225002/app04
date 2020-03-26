@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -199,8 +200,10 @@ public class Main2Activity extends AppCompatActivity {
     private UIhandler uIhandler = new UIhandler();
 
     private class UIhandler extends Handler {
+
         @Override
         public void handleMessage(@NonNull Message msg) {
+
             super.handleMessage(msg);
 
             switch (msg.what) {
@@ -237,7 +240,7 @@ public class Main2Activity extends AppCompatActivity {
     //使用pdfmyurl網站的(網站轉成pdf)功能方法
     private void fetchPDF() {
         try {
-            URL url = new URL("https://pdfmyurl.com/?url=https://www.gamer.com.tw/");
+            URL url = new URL("https://pdfmyurl.com/?url=https://www.gamer.com.tw");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 //            因為跳出error:1000008b:SSL 無法解析加密https
 //            因此加入這串讓他為true
@@ -265,7 +268,7 @@ public class Main2Activity extends AppCompatActivity {
             fout.flush();
             fout.close();
             //加入觀看pdf
-//            uIhandler.sendEmptyMessage(3);已寫在第7顆按鈕來讀取PDF
+            uIhandler.sendEmptyMessage(3);//已寫在第7顆按鈕來讀取PDF
             Log.v("brad","save ok");
 
         } catch (Exception e) {
@@ -305,7 +308,7 @@ public class Main2Activity extends AppCompatActivity {
         //標記可以給客戶端一個指定檔案的臨時訪問許可權
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(intent);
-        uIhandler.sendEmptyMessage(3);
+//        uIhandler.sendEmptyMessage(3);
     }
     //讀取外部資料夾內的pdf
     public void test7(View view){
